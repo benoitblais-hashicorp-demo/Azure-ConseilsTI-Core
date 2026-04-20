@@ -13,7 +13,7 @@ output "azurerm_management_group" {
 output "subscriptions" {
   description = "Returns the map of all provisioned subscriptions including their IDs, display names, and associated Management Groups. Useful for secondary workspaces to configure SPNs and Policies."
   value = {
-    for k, sub in azurerm_subscription.this :
+    for k, sub in module.subscriptions :
     k => {
       subscription_name   = sub.subscription_name
       subscription_id     = sub.subscription_id
