@@ -1,8 +1,8 @@
 # Example assuming you used a map/set of keys like "identity", "connectivity", etc:
 
 moved {
-  from = azurerm_subscription.this["connectivity"]
-  to   = module.subscriptions["connectivity"].azurerm_subscription.this
+  from = azurerm_subscription.this["mg-connectivity"]
+  to   = module.subscriptions["mg-connectivity"].azurerm_subscription.this
 }
 
 <!-- moved {
