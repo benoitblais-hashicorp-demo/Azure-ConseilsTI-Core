@@ -1,3 +1,50 @@
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.64.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.64.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [azurerm_management_group.level_1](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) | resource |
+| [azurerm_management_group.level_2](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) | resource |
+| [azurerm_management_group.level_3](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) | resource |
+| [azurerm_management_group.level_4](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) | resource |
+| [azurerm_management_group.level_5](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) | resource |
+| [azurerm_management_group.level_6](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) | resource |
+| [azurerm_management_group_subscription_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_subscription_association) | resource |
+| [azurerm_subscription.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subscription) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_billing_scope_id"></a> [billing\_scope\_id](#input\_billing\_scope\_id) | (Required) The Billing Scope ID for the Microsoft Customer Agreement (MCA) where the subscriptions will be created. | `string` | n/a | yes |
+| <a name="input_root_name"></a> [root\_name](#input\_root\_name) | (Required) Will set a custom Display Name value for the Enterprise-scale root Management Group. | `string` | n/a | yes |
+| <a name="input_root_parent_id"></a> [root\_parent\_id](#input\_root\_parent\_id) | (Required) The root\_parent\_id is used to specify where to set the root for all Landing Zone deployments. Usually the Tenant ID when deploying the core Enterprise-scale Landing Zones. | `string` | n/a | yes |
+| <a name="input_subscription_id"></a> [subscription\_id](#input\_subscription\_id) | (Required) Azure Subscription ID for the provider to authenticate against. | `string` | n/a | yes |
+| <a name="input_tenant_id"></a> [tenant\_id](#input\_tenant\_id) | (Required) Azure Tenant ID for the provider to authenticate against. | `string` | n/a | yes |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_azurerm_management_group"></a> [azurerm\_management\_group](#output\_azurerm\_management\_group) | Returns the configuration data for all Management Groups created. |
+| <a name="output_subscriptions"></a> [subscriptions](#output\_subscriptions) | Returns the map of all provisioned subscriptions including their IDs, display names, and associated Management Groups. Useful for secondary workspaces to configure SPNs and Policies. |
+
 <!-- BEGIN_TF_DOCS -->
 <!-- markdownlint-disable MD033 -->
 # Azure Management Groups and Subscriptions
@@ -23,8 +70,11 @@ The following diagram illustrates the specific Management Group hierarchy provis
 
 The following permissions are required to apply this configuration:
 
-- **AzureRM (Management Groups)**: `Management Group Contributor` or `Owner` on the Tenant Root Management Group.
-- **AzureRM (Subscriptions)**: `Azure Subscription Creator` role or explicit permissions on the Microsoft Customer Agreement (MCA) Invoice Section/Billing Profile to provision new subscriptions.
+- **Azure Management Groups**: `Management Group Contributor` or `Owner` on the Tenant Root Management Group.
+- **Azure Subscriptions (Billing)**: `Azure subscription creator` role.
+  - **Important Note**: This is an Azure *Billing* role, not a standard Azure RBAC role.
+  - For a Microsoft Customer Agreement (MCA), this role must be assigned at the **Invoice Section** scope corresponding to the `billing_scope_id` variable.
+  - **How to assign via Azure Portal**: Navigate to **Cost Management + Billing** > Select your Billing Scope > **Billing profiles** > Select your profile > **Invoice sections** > Select your invoice section > **Access control (IAM)** > Add the `Azure subscription creator` role to the Service Principal or User running this Terraform configuration.
 
 ## Authentications
 
