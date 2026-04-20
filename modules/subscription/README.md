@@ -46,10 +46,6 @@ module "my_subscription" {
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.64 |
 
-## Modules
-
-No modules.
-
 ## Resources
 
 | Name | Type |
