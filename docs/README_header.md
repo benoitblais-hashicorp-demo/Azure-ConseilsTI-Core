@@ -22,8 +22,11 @@ The following diagram illustrates the specific Management Group hierarchy provis
 
 The following permissions are required to apply this configuration:
 
-- **AzureRM (Management Groups)**: `Management Group Contributor` or `Owner` on the Tenant Root Management Group.
-- **AzureRM (Subscriptions)**: `Azure Subscription Creator` role or explicit permissions on the Microsoft Customer Agreement (MCA) Invoice Section/Billing Profile to provision new subscriptions.
+- **Azure Management Groups**: `Management Group Contributor` or `Owner` on the Tenant Root Management Group.
+- **Azure Subscriptions (Billing)**: `Azure subscription creator` role.
+  - **Important Note**: This is an Azure *Billing* role, not a standard Azure RBAC role.
+  - For a Microsoft Customer Agreement (MCA), this role must be assigned at the **Invoice Section** scope corresponding to the `billing_scope_id` variable.
+  - **How to assign via Azure Portal**: Navigate to **Cost Management + Billing** > Select your Billing Scope > **Billing profiles** > Select your profile > **Invoice sections** > Select your invoice section > **Access control (IAM)** > Add the `Azure subscription creator` role to the Service Principal or User running this Terraform configuration.
 
 ## Authentications
 
