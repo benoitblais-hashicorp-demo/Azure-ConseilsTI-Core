@@ -18,4 +18,3 @@ Replace this with a brief description of what this Pull Request fixes, changes, 
 * [ ] I have commented my code, particularly in hard-to-understand areas
 * [ ] I have made corresponding changes to the documentation
 * [ ] My changes generate no new warnings
-* [ ] I have successfully validated that the Stack evaluates cleanly in HCP Terraform.
