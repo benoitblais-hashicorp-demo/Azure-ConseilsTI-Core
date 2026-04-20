@@ -1,24 +1,27 @@
+<!-- markdownlint-disable MD033 -->
 # Azure Management Groups and Subscriptions
 
-This project is responsible for provisioning the core Azure Management Groups and baseline Subscriptions required for the Landing Zone. It defines the core platform Enterprise-scale management groups and hierarchy according to the Cloud Adoption Framework (CAF) and automatically provisions and associates required workload subscriptions (Identity, Management, Connectivity) to their respective management groups.
+This project is responsible for provisioning the core Azure Management Groups and baseline Subscriptions required for the Landing Zone.
+It defines the core platform Enterprise-scale management groups and hierarchy according to the Cloud Adoption Framework (CAF) and automatically provisions and associates required workload subscriptions (Identity, Management, Connectivity) to their respective management groups.
 
 ## Cloud Adoption Framework - Level 1: Core Platform
 
-This repository focuses on **Level 1** of the Cloud Adoption Framework (CAF), provisioning the **Core platform: Enterprise-Scale management groups, Identity, and Subscriptions**. 
+This repository focuses on **Level 1** of the Cloud Adoption Framework (CAF), provisioning the **Core platform: Enterprise-Scale management groups, Identity, and Subscriptions**.
 
 Due to technical limitations and state management considerations within Terraform, the configuration of Azure Policies and identity access (Service Principals/RBAC) has been split from this codebase into dedicated repositories. This workspace cleanly exposes the necessary subscription outputs for those downstream repositories to consume.
 
-![Cloud Adoption Framework Levels](./media/caf-hierarchy-levels.png)
+![Cloud Adoption Framework Levels](docs/media/caf-hierarchy-levels.png)
 
 ## Management Group Structure
 
 The following diagram illustrates the specific Management Group hierarchy provisioned by this Terraform configuration.
 
-![Management Group Structure](./media/sub-organization.png)
+![Management Group Structure](docs/media/sub-organization.png)
 
 ## Permissions
 
 The following permissions are required to apply this configuration:
+
 - **AzureRM (Management Groups)**: `Management Group Contributor` or `Owner` on the Tenant Root Management Group.
 - **AzureRM (Subscriptions)**: `Azure Subscription Creator` role or explicit permissions on the Microsoft Customer Agreement (MCA) Invoice Section/Billing Profile to provision new subscriptions.
 
@@ -31,6 +34,7 @@ Authentication to Azure can be configured using one of the following methods, wi
 Use OIDC for secure, passwordless authentication from your CI/CD pipelines (e.g., HCP Terraform Workspaces, GitHub Actions, GitLab CI).
 
 - **Inside the provider block**
+
   ```hcl
   provider "azurerm" {
     features {}
@@ -52,6 +56,7 @@ Use OIDC for secure, passwordless authentication from your CI/CD pipelines (e.g.
 Use an Azure AD service principal for non-interactive runs if OIDC is unavailable.
 
 - **Inside the provider block**
+
   ```hcl
   provider "azurerm" {
     features {}
@@ -70,6 +75,7 @@ Use an Azure AD service principal for non-interactive runs if OIDC is unavailabl
   - `ARM_CLIENT_SECRET`
 
 Documentation:
+
 - [Authenticating to Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure)
 - [Dynamic Provider Credentials (OIDC)](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_oidc)
 - [HCP Terraform Dynamic Credentials with Azure](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/dynamic-provider-credentials/azure-configuration)
