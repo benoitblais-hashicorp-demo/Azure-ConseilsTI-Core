@@ -47,4 +47,4 @@ jobs:
           VALIDATE_TERRAFORM_TFLINT: true
           VALIDATE_YAML: true
           # Exclude SKILL.md files and root README.md from linting
-          FILTER_REGEX_EXCLUDE: .*SKILL\.md$|^README\.md$
+          FILTER_REGEX_EXCLUDE: .*SKILL\.md$|.*README\.md$
