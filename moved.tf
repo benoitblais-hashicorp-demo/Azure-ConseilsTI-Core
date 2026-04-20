@@ -5,7 +5,7 @@ moved {
   to   = module.subscriptions["mg-connectivity"].azurerm_subscription.this
 }
 
-<!-- moved {
-  from = azurerm_management_group_subscription_association.this["identity"]
-  to   = module.subscriptions["identity"].azurerm_management_group_subscription_association.this
-} -->
+# moved {
+#   from = azurerm_management_group_subscription_association.this["identity"]
+#   to   = module.subscriptions["identity"].azurerm_management_group_subscription_association.this
+# }
