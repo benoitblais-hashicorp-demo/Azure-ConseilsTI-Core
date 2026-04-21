@@ -33,25 +33,28 @@ variable "tenant_id" {
   type        = string
 }
 
-# variable "tfc_organization" {
-#   description = "The HCP Terraform Organization name for the Federated Identity Credentials."
-#   type        = string
-# }
+variable "tfc_organization" {
+  description = "(Required) The HCP Terraform Organization name."
+  type        = string
+}
 
-# variable "tfc_project" {
-#   description = "The HCP Terraform Project name for the Federated Identity Credentials."
-#   type        = string
-# }
+variable "tfc_project" {
+  description = "(Required) The HCP Terraform Project name."
+  type        = string
+}
 
-# variable "tfc_workspace_mapping" {
-#   description = "A mapping of landing zone keys (e.g. 'connectivity', 'identity') to their respective workspaces."
-#   type = map(object({
-#     network    = string
-#     restricted = string
-#   }))
-# }
+variable "tfc_workspace_policies" {
+  description = "(Required) The HCP Terraform Workspace name used for deployments and management of Azure Policies via HCP Terraform."
+  type        = string
 
-# variable "tfc_workspace_policy" {
-#   description = "The HCP Terraform Workspace name for the dedicated Policy SPN."
-#   type        = string
-# }
+  validation {
+    condition     = var.tfc_workspace_policies == "" || (var.tfc_organization != "" && var.tfc_project != "")
+    error_message = "If 'tfc_workspace_policies' is provided, both 'tfc_organization' and 'tfc_project' must also be provided to create the Federated Identity Credential."
+  }
+}
+
+variable "policy_spn_display_name" {
+  description = "(Optional) The display name for the application registration of the Policy SPN. This SPN will be used for deployments and management of Azure Policies via HCP Terraform, ensuring consistent policy enforcement across the Landing Zones."
+  type        = string
+  default     = "spn-lz-policy-mgmt"
+}
