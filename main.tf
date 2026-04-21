@@ -109,7 +109,7 @@ module "subscriptions" {
 
 resource "azurerm_role_definition" "restricted_contributor" {
   name        = "Platform Restricted Contributor"
-  scope       = azurerm_management_group.level_1[local.root_id].id
+  scope       = azurerm_management_group.level_1["${local.provider_path.management_groups}${local.root_id}"].id
   description = "Restricted Contributor for Platform Landing Zones. Cannot mutate routing or network structures."
 
   permissions {
@@ -178,7 +178,7 @@ resource "azuread_application_flexible_federated_identity_credential" "policy" {
 }
 
 resource "azurerm_role_assignment" "policy_mgmt" {
-  scope                = azurerm_management_group.level_1[local.root_id].id
+  scope                = azurerm_management_group.level_1["${local.provider_path.management_groups}${local.root_id}"].id
   role_definition_name = "Resource Policy Contributor"
   principal_id         = azuread_service_principal.policy.object_id
 }
