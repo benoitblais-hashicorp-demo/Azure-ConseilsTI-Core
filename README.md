@@ -146,6 +146,8 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.6.0)
 
+- <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) (~> 3.1)
+
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.64.0)
 
 ## Modules
@@ -162,9 +164,21 @@ Version:
 
 The following input variables are required:
 
-### <a name="input_billing_scope_id"></a> [billing\_scope\_id](#input\_billing\_scope\_id)
+### <a name="input_billing_account_name"></a> [billing\_account\_name](#input\_billing\_account\_name)
 
-Description: (Required) The Billing Scope ID for the Microsoft Customer Agreement (MCA) where the subscriptions will be created.
+Description: (Required) The Billing Account Name of the MCA account.
+
+Type: `string`
+
+### <a name="input_billing_profile_name"></a> [billing\_profile\_name](#input\_billing\_profile\_name)
+
+Description: (Required) The Billing Profile Name in the above Billing Account.
+
+Type: `string`
+
+### <a name="input_invoice_section_name"></a> [invoice\_section\_name](#input\_invoice\_section\_name)
+
+Description: (Required) The Invoice Section Name in the above Billing Profile.
 
 Type: `string`
 
@@ -206,6 +220,7 @@ The following resources are used by this module:
 - [azurerm_management_group.level_4](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
 - [azurerm_management_group.level_5](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
 - [azurerm_management_group.level_6](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
+- [azurerm_billing_mca_account_scope.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/billing_mca_account_scope) (data source)
 
 ## Outputs
 
