@@ -51,7 +51,7 @@ locals {
     "${local.root_id}-management" = {
       display_name               = "Management"
       parent_management_group_id = "${local.root_id}-platform"
-      subscription_name          = "sub-management-cac-01"
+      # subscription_name          = "sub-management-cac-01"
     }
     "${local.root_id}-identity" = {
       display_name               = "Identity"

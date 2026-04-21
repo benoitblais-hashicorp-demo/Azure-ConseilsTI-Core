@@ -99,62 +99,41 @@ module "subscriptions" {
   ]
 }
 
-# # ---------------------------------------------------------------------------------------------------------------------
-# # Identity & RBAC Configuration
-# # ---------------------------------------------------------------------------------------------------------------------
 
-# resource "azurerm_role_definition" "restricted_contributor" {
-#   name        = "Platform Restricted Contributor"
-#   scope       = azurerm_management_group.level_1[local.root_id].id
-#   description = "Restricted Contributor for Platform Landing Zones. Cannot mutate routing or network structures."
+# Identity & RBAC Configuration
+# The following block creates a custom role definition with elevated permissions for the Landing Zone Identity SPNs, but excludes
+# permissions to mutate network and routing configurations, as well as role assignments and blueprint assignments. This is to ensure
+# the SPNs can perform necessary actions for Landing Zone deployments and management, but cannot modify critical security and network
+# structures. The custom role is assigned at the Management Group scope to ensure it applies to all subscriptions under the Management
+# Group hierarchy.
 
-#   permissions {
-#     actions = [
-#       "*"
-#     ]
-#     not_actions = [
-#       "Microsoft.Authorization/*/Delete",
-#       "Microsoft.Authorization/*/Write",
-#       "Microsoft.Authorization/elevateAccess/Action",
-#       "Microsoft.Blueprint/blueprintAssignments/write",
-#       "Microsoft.Blueprint/blueprintAssignments/delete",
-#       "Microsoft.Compute/galleries/share/action",
-#       "Microsoft.Network/virtualNetworks/write",
-#       "Microsoft.Network/virtualNetworks/delete",
-#       "Microsoft.Network/routeTables/write",
-#       "Microsoft.Network/routeTables/delete",
-#       "Microsoft.Network/networkSecurityGroups/write",
-#       "Microsoft.Network/networkSecurityGroups/delete"
-#     ]
-#     data_actions     = []
-#     not_data_actions = []
-#   }
-# }
+resource "azurerm_role_definition" "restricted_contributor" {
+  name        = "Platform Restricted Contributor"
+  scope       = azurerm_management_group.level_1[local.root_id].id
+  description = "Restricted Contributor for Platform Landing Zones. Cannot mutate routing or network structures."
 
-# # Policy SPN (assigned at the MG scope)
-# resource "azuread_application" "policy" {
-#   display_name = "spn-lz-policy-mgmt"
-#   owners       = []
-# }
-
-# resource "azuread_service_principal" "policy" {
-#   client_id = azuread_application.policy.client_id
-# }
-
-# resource "azuread_application_flexible_federated_identity_credential" "policy" {
-#   application_id = azuread_application.policy.id
-#   display_name   = "fic-tfc-policy-mgmt"
-#   description    = "Deployments for policy management from HCP Terraform"
-#   audiences      = ["api://AzureADTokenExchange"]
-#   issuer         = "https://app.terraform.io"
-#   subject        = "organization:${var.tfc_organization}:project:${var.tfc_project}:workspace:${var.tfc_workspace_policy}"
-# }
-
-# resource "azurerm_role_assignment" "policy_mgmt" {
-#   scope                = azurerm_management_group.level_1[local.root_id].id
-#   role_definition_name = "Resource Policy Contributor"
-#   principal_id         = azuread_service_principal.policy.object_id
-# }
+  permissions {
+    actions = [
+      "*"
+    ]
+    not_actions = [
+      "Microsoft.Authorization/*/Delete",
+      "Microsoft.Authorization/*/Write",
+      "Microsoft.Authorization/elevateAccess/Action",
+      "Microsoft.Blueprint/blueprintAssignments/write",
+      "Microsoft.Blueprint/blueprintAssignments/delete",
+      "Microsoft.Compute/galleries/share/action",
+      "Microsoft.Network/virtualNetworks/write",
+      "Microsoft.Network/virtualNetworks/delete",
+      "Microsoft.Network/routeTables/write",
+      "Microsoft.Network/routeTables/delete",
+      "Microsoft.Network/networkSecurityGroups/write",
+      "Microsoft.Network/networkSecurityGroups/delete"
+    ]
+    data_actions     = []
+    not_data_actions = []
+  }
+}
 
 # # Subscriptions Identity assignment via module
 # module "identity" {
@@ -174,3 +153,32 @@ module "subscriptions" {
 #   tfc_workspace_restricted  = var.tfc_workspace_mapping[split("-", each.key)[1]].restricted
 # }
 
+# Policy SPN (assigned at the MG scope)
+# The Policy SPN is assigned at the Management Group scope to ensure it has the necessary permissions to manage policies across all
+# subscriptions in the hierarchy. This SPN will be used for deployments and management of Azure Policies via HCP Terraform, ensuring
+# consistent policy enforcement across the Landing Zones.
+
+resource "azuread_application" "policy" {
+  display_name = var.policy_spn_display_name
+  owners       = []
+}
+
+resource "azuread_service_principal" "policy" {
+  client_id = azuread_application.policy.client_id
+}
+
+resource "azuread_application_flexible_federated_identity_credential" "policy" {
+  count                      = var.tfc_organization != "" && var.tfc_project != "" && var.tfc_workspace_policies != "" ? 1 : 0
+  application_id             = azuread_application.policy.id
+  claims_matching_expression = "claims['sub'] matches 'organization:${var.tfc_organization}:project:${var.tfc_project}:workspace:${var.tfc_workspace_policies}:run_phase:*'"
+  display_name               = var.tfc_workspace_policies
+  description                = "Federated Identity Credential for ${var.tfc_workspace_policies} to manage policies across Landing Zones from HCP Terraform"
+  audience                   = "api://AzureADTokenExchange"
+  issuer                     = "https://app.terraform.io"
+}
+
+resource "azurerm_role_assignment" "policy_mgmt" {
+  scope                = azurerm_management_group.level_1[local.root_id].id
+  role_definition_name = "Resource Policy Contributor"
+  principal_id         = azuread_service_principal.policy.object_id
+}
