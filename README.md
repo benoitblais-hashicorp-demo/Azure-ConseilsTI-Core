@@ -146,6 +146,8 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.6.0)
 
+- <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) (~> 3.1)
+
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.64.0)
 
 ## Modules
@@ -162,9 +164,21 @@ Version:
 
 The following input variables are required:
 
-### <a name="input_billing_scope_id"></a> [billing\_scope\_id](#input\_billing\_scope\_id)
+### <a name="input_billing_account_name"></a> [billing\_account\_name](#input\_billing\_account\_name)
 
-Description: (Required) The Billing Scope ID for the Microsoft Customer Agreement (MCA) where the subscriptions will be created.
+Description: (Required) The Billing Account Name of the MCA account.
+
+Type: `string`
+
+### <a name="input_billing_profile_name"></a> [billing\_profile\_name](#input\_billing\_profile\_name)
+
+Description: (Required) The Billing Profile Name in the above Billing Account.
+
+Type: `string`
+
+### <a name="input_invoice_section_name"></a> [invoice\_section\_name](#input\_invoice\_section\_name)
+
+Description: (Required) The Invoice Section Name in the above Billing Profile.
 
 Type: `string`
 
@@ -192,20 +206,52 @@ Description: (Required) Azure Tenant ID for the provider to authenticate against
 
 Type: `string`
 
+### <a name="input_tfc_organization"></a> [tfc\_organization](#input\_tfc\_organization)
+
+Description: (Required) The HCP Terraform Organization name.
+
+Type: `string`
+
+### <a name="input_tfc_project"></a> [tfc\_project](#input\_tfc\_project)
+
+Description: (Required) The HCP Terraform Project name.
+
+Type: `string`
+
+### <a name="input_tfc_workspace_policies"></a> [tfc\_workspace\_policies](#input\_tfc\_workspace\_policies)
+
+Description: (Required) The HCP Terraform Workspace name used for deployments and management of Azure Policies via HCP Terraform.
+
+Type: `string`
+
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_policy_spn_display_name"></a> [policy\_spn\_display\_name](#input\_policy\_spn\_display\_name)
+
+Description: (Optional) The display name for the application registration of the Policy SPN. This SPN will be used for deployments and management of Azure Policies via HCP Terraform, ensuring consistent policy enforcement across the Landing Zones.
+
+Type: `string`
+
+Default: `"spn-lz-policy-mgmt"`
 
 ## Resources
 
 The following resources are used by this module:
 
+- [azuread_application.policy](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application) (resource)
+- [azuread_application_flexible_federated_identity_credential.policy](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application_flexible_federated_identity_credential) (resource)
+- [azuread_service_principal.policy](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/service_principal) (resource)
 - [azurerm_management_group.level_1](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
 - [azurerm_management_group.level_2](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
 - [azurerm_management_group.level_3](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
 - [azurerm_management_group.level_4](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
 - [azurerm_management_group.level_5](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
 - [azurerm_management_group.level_6](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
+- [azurerm_role_assignment.policy_mgmt](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azurerm_role_definition.restricted_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) (resource)
+- [azurerm_billing_mca_account_scope.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/billing_mca_account_scope) (data source)
 
 ## Outputs
 
